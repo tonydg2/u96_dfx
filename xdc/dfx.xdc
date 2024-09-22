@@ -47,3 +47,11 @@ add_cells_to_pblock led_cnt3_pr [get_cells [list led_cnt3_pr_inst]] -clear_locs
 #  create_pblock pblock_X0Y1
 #  resize_pblock pblock_X0Y1 -add CLOCKREGION_X1Y1:CLOCKREGION_X0Y1
 #  add_cells_to_pblock pblock_X0Y1 [get_cells [list axil_reg32_A_inst]] -clear_locs
+
+
+#--------------------------------------------------------------------------------------------------
+# testing BDC DFX in IPI BD
+create_pblock pblock_led_bd
+resize_pblock pblock_led_bd -add {SLICE_X32Y90:SLICE_X48Y117 DSP48E2_X3Y36:DSP48E2_X4Y45 RAMB18_X3Y36:RAMB18_X5Y45 RAMB36_X3Y18:RAMB36_X5Y22}
+WARNING: [Vivado 12-4775] Pblock ranges need to include all sites of a tile. The following ranges will be automatically aligned to a tile boundary: SLICE_X32Y90:SLICE_X48Y117, DSP48E2_X3Y36:DSP48E2_X4Y45, RAMB18_X3Y36:RAMB18_X5Y45, RAMB36_X3Y18:RAMB36_X5Y22
+add_cells_to_pblock pblock_led_bd [get_cells [list top_bd_wrapper_inst/top_bd_i/led_bd]] -clear_locs

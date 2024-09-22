@@ -26,6 +26,7 @@ logic [63:0]   git_hash;
 logic [4:0]    led_div_i;
 logic [31:0]   timestamp;
 
+logic [1:0]   led_sel;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -116,27 +117,29 @@ logic [31:0]   timestamp;
     .led_o  (led3         )
   );
 
-  assign RADIO_LED[0] = (led_sel)? led3:led2;
-
+//  assign RADIO_LED[0] = (led_sel)? led3:led2;
+  assign RADIO_LED[0] = (led_sel == 2'h0)? led3:
+                        (led_sel == 2'h1)? led2:
+                        (led_sel == 2'h2)? bd_led: 1'b0;
 endmodule
 
-// blackbox definition (only for DFX, otherwise remove)
-module led_cnt_pr (
-  input   rst,
-  input   clk100,
-  output  led_o);
-endmodule
-
-// blackbox definition
-module led_cnt2_pr (
-  input   rst,
-  input   clk100,
-  output  led_o);
-endmodule
-
-// blackbox definition
-module led_cnt3_pr (
-  input   rst,
-  input   clk100,
-  output  led_o);
-endmodule
+//      // blackbox definition (only for DFX, otherwise remove)
+//      module led_cnt_pr (
+//        input   rst,
+//        input   clk100,
+//        output  led_o);
+//      endmodule
+//      
+//      // blackbox definition
+//      module led_cnt2_pr (
+//        input   rst,
+//        input   clk100,
+//        output  led_o);
+//      endmodule
+//      
+//      // blackbox definition
+//      module led_cnt3_pr (
+//        input   rst,
+//        input   clk100,
+//        output  led_o);
+//      endmodule

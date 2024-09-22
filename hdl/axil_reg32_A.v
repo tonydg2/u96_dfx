@@ -11,7 +11,7 @@
     input [31:0] timestamp,
 		input         led,
 		input         led3,
-    output        led_sel,
+    output [1:0]  led_sel,
 
     input wire  S_AXI_ACLK,
 		input wire  S_AXI_ARESETN,
@@ -661,7 +661,7 @@
 	end    
 
 	// Add user logic here
-  assign led_sel = slv_reg7[0];
+  assign led_sel = slv_reg7[1:0];
 	// User logic ends
 
 	endmodule
