@@ -1,7 +1,7 @@
 
-create_pblock pblock_led_cnt_top_inst
-resize_pblock pblock_led_cnt_top_inst -add {SLICE_X0Y120:SLICE_X28Y179 BUFG_PS_X0Y48:BUFG_PS_X0Y71 DSP48E2_X0Y48:DSP48E2_X2Y71 RAMB18_X0Y48:RAMB18_X2Y71 RAMB36_X0Y24:RAMB36_X2Y35}
-add_cells_to_pblock pblock_led_cnt_top_inst [get_cells [list led_cnt_top_inst]] -clear_locs
+#create_pblock pblock_led_cnt_top_inst
+#resize_pblock pblock_led_cnt_top_inst -add {SLICE_X0Y120:SLICE_X28Y179 BUFG_PS_X0Y48:BUFG_PS_X0Y71 DSP48E2_X0Y48:DSP48E2_X2Y71 RAMB18_X0Y48:RAMB18_X2Y71 RAMB36_X0Y24:RAMB36_X2Y35}
+#add_cells_to_pblock pblock_led_cnt_top_inst [get_cells [list led_cnt_top_inst]] -clear_locs
 #--------------------------------------------------------------------------------------------------
 create_pblock pblock_led_cnt_pr_inst
 resize_pblock pblock_led_cnt_pr_inst -add {SLICE_X2Y149:SLICE_X14Y174 DSP48E2_X0Y60:DSP48E2_X0Y69 RAMB18_X0Y60:RAMB18_X1Y69 RAMB36_X0Y30:RAMB36_X1Y34}

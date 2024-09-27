@@ -28,6 +28,7 @@ logic [4:0]   led_div_i;
 logic [31:0]  timestamp;
 logic [1:0]   led_sel;
 logic [15:0]  probe0;
+logic [1:0]   leds;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -69,6 +70,7 @@ logic [15:0]  probe0;
 //    .led_o  (RADIO_LED[1] ) //BLUE
 //  );
 
+/*
 dfx_axi_mgr dfx_axi_mgr_inst (
   .clk                    (clk100             ),    
   .resetn                 (rstn               ),  
@@ -120,7 +122,7 @@ dfx_axi_mgr dfx_axi_mgr_inst (
   .m_axi_arvalid          (m_axi_mgr_arvalid  ),    // output wire m_axi_arvalid
   .m_axi_arready          (m_axi_mgr_arready  )     // input wire m_axi_arready
 );
-
+*/
 	axil_reg32_2  #(
 		.C_S_AXI_DATA_WIDTH(32),
 		.C_S_AXI_ADDR_WIDTH(7)
@@ -132,48 +134,58 @@ dfx_axi_mgr dfx_axi_mgr_inst (
     .led_sel        (led_sel          ),
     .S_AXI_ACLK     (clk100           ),
 		.S_AXI_ARESETN  (rstn             ),
-		.S_AXI_AWADDR   (m_axi_mgr_awaddr  ),
-		.S_AXI_AWPROT   (m_axi_mgr_awprot  ),
-		.S_AXI_AWVALID  (m_axi_mgr_awvalid ),
-		.S_AXI_AWREADY  (m_axi_mgr_awready ),
-		.S_AXI_WDATA    (m_axi_mgr_wdata   ),
-		.S_AXI_WSTRB    (m_axi_mgr_wstrb   ),
-		.S_AXI_WVALID   (m_axi_mgr_wvalid  ),
-		.S_AXI_WREADY   (m_axi_mgr_wready  ),
-		.S_AXI_BRESP    (m_axi_mgr_bresp   ),
-		.S_AXI_BVALID   (m_axi_mgr_bvalid  ),
-		.S_AXI_BREADY   (m_axi_mgr_bready  ),
-		.S_AXI_ARADDR   (m_axi_mgr_araddr  ),
-		.S_AXI_ARPROT   (m_axi_mgr_arprot  ),
-		.S_AXI_ARVALID  (m_axi_mgr_arvalid ),
-		.S_AXI_ARREADY  (m_axi_mgr_arready ),
-		.S_AXI_RDATA    (m_axi_mgr_rdata   ),
-		.S_AXI_RRESP    (m_axi_mgr_rresp   ),
-		.S_AXI_RVALID   (m_axi_mgr_rvalid  ),
-		.S_AXI_RREADY   (m_axi_mgr_rready  )
+		.S_AXI_AWADDR   (M00_AXIL_awaddr  ),
+		.S_AXI_AWPROT   (M00_AXIL_awprot  ),
+		.S_AXI_AWVALID  (M00_AXIL_awvalid ),
+		.S_AXI_AWREADY  (M00_AXIL_awready ),
+		.S_AXI_WDATA    (M00_AXIL_wdata   ),
+		.S_AXI_WSTRB    (M00_AXIL_wstrb   ),
+		.S_AXI_WVALID   (M00_AXIL_wvalid  ),
+		.S_AXI_WREADY   (M00_AXIL_wready  ),
+		.S_AXI_BRESP    (M00_AXIL_bresp   ),
+		.S_AXI_BVALID   (M00_AXIL_bvalid  ),
+		.S_AXI_BREADY   (M00_AXIL_bready  ),
+		.S_AXI_ARADDR   (M00_AXIL_araddr  ),
+		.S_AXI_ARPROT   (M00_AXIL_arprot  ),
+		.S_AXI_ARVALID  (M00_AXIL_arvalid ),
+		.S_AXI_ARREADY  (M00_AXIL_arready ),
+		.S_AXI_RDATA    (M00_AXIL_rdata   ),
+		.S_AXI_RRESP    (M00_AXIL_rresp   ),
+		.S_AXI_RVALID   (M00_AXIL_rvalid  ),
+		.S_AXI_RREADY   (M00_AXIL_rready  )
 	);
 
-  led_cnt_pr led_cnt_pr_inst (
-    .rst    (~rstn        ),
-    .clk100 (clk100       ),
-    .led_o  (RADIO_LED[1] ) //BLUE
-  );
+(* DONT_TOUCH = "yes" *) led_cnt_top led_cnt_top_inst (
+  .rstn   (rstn     ),
+  .clk100 (clk100   ),
+  .leds_o (leds     )
+);
 
-  led_cnt2_pr led_cnt2_pr_inst (
-    .rst    (~rstn        ),
-    .clk100 (clk100       ),
-    .led_o  (led2         )//Yellow
-  );
+assign RADIO_LED[0] = leds[0];
+assign RADIO_LED[1] = leds[1];
 
-  led_cnt3_pr led_cnt3_pr_inst (
-    .rst    (~rstn        ),
-    .clk100 (clk100       ),
-    .led_o  (led3         )
-  );
 
-  assign RADIO_LED[0] = (led_sel == 2'h0)? led3:
-                        (led_sel == 2'h1)? led2:
-                        bd_led;
+//  led_cnt_pr led_cnt_pr_inst (
+//    .rst    (~rstn        ),
+//    .clk100 (clk100       ),
+//    .led_o  (RADIO_LED[1] ) //BLUE
+//  );
+//
+//  led_cnt2_pr led_cnt2_pr_inst (
+//    .rst    (~rstn        ),
+//    .clk100 (clk100       ),
+//    .led_o  (led2         )//Yellow
+//  );
+//
+//  led_cnt3_pr led_cnt3_pr_inst (
+//    .rst    (~rstn        ),
+//    .clk100 (clk100       ),
+//    .led_o  (led3         )
+//  );
+//
+//  assign RADIO_LED[0] = (led_sel == 2'h0)? led3:
+//                        (led_sel == 2'h1)? led2:
+//                        bd_led;
 
 //-------------------------------------------------------------------------------------------------
   //m_axi_mgr_rdata    ),    // input wire [31 : 0] m_axi_rdata
@@ -307,6 +319,16 @@ ila1 ila1_inst (
 endmodule
 //-------------------------------------------------------------------------------------------------
 
+module led_cnt_top (
+  input         rst,
+  input         clk100,
+  output [1:0]  leds_o);
+endmodule
+
+
+
+
+/*
 // blackbox definition (only for DFX, otherwise remove)
 // do I actually need these...? test and verify...
 module led_cnt_pr (
@@ -361,3 +383,4 @@ module axil_reg32_2 #
 	output      S_AXI_RVALID,
 	input      S_AXI_RREADY);
 endmodule
+*/
