@@ -12,6 +12,7 @@
 		input         led,
 		input         led3,
     output [1:0]  led_sel,
+    input [31:0]  cnt_vers,
 
     input wire  S_AXI_ACLK,
 		input wire  S_AXI_ARESETN,
@@ -613,7 +614,7 @@
 	        5'h05   : reg_data_out <= timestamp; // 0x14
 	        5'h06   : reg_data_out <= {30'h0,led,led3};//slv_reg6; // 0x18
 	        5'h07   : reg_data_out <= slv_reg7; // 0x1C       
-	        5'h08   : reg_data_out <= slv_reg8; // 0x20    
+	        5'h08   : reg_data_out <= cnt_vers; // 0x20    
 	        5'h09   : reg_data_out <= slv_reg9; // 0x24  
 	        5'h0A   : reg_data_out <= slv_reg10;// 0x28      
 	        5'h0B   : reg_data_out <= slv_reg11;// 0x2C      

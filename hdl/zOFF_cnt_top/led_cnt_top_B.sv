@@ -2,11 +2,11 @@
 module led_cnt_top (
   input         rstn,
   input         clk100,
-  output [1:0]  leds_o, 
+  output [1:0]  leds_o,
   output [31:0] version
 );
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-  localparam  [31:0]  VERS = 32'hAAAA_0666;
+  localparam  [31:0]  VERS = 32'hBBBB_0777;
   logic led1, led2;
 
   (* DONT_TOUCH = "yes" *) led_cnt_pr led_cnt_pr_inst (

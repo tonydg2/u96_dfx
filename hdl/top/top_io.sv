@@ -29,6 +29,7 @@ logic [31:0]  timestamp;
 logic [1:0]   led_sel;
 logic [15:0]  probe0;
 logic [1:0]   leds;
+logic [31:0]  cnt_vers;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -132,6 +133,7 @@ dfx_axi_mgr dfx_axi_mgr_inst (
 		.led            (bd_led           ),
     .led3           (led3             ),
     .led_sel        (led_sel          ),
+    .cnt_vers       (cnt_vers         ),
     .S_AXI_ACLK     (clk100           ),
 		.S_AXI_ARESETN  (rstn             ),
 		.S_AXI_AWADDR   (M00_AXIL_awaddr  ),
@@ -158,7 +160,8 @@ dfx_axi_mgr dfx_axi_mgr_inst (
 (* DONT_TOUCH = "yes" *) led_cnt_top led_cnt_top_inst (
   .rstn   (rstn     ),
   .clk100 (clk100   ),
-  .leds_o (leds     )
+  .leds_o (leds     ),
+  .version(cnt_vers )
 );
 
 assign RADIO_LED[0] = leds[0];
