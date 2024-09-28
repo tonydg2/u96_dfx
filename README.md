@@ -1,5 +1,7 @@
 ## Nested DFX initial test
 
+### tested on HW, mostly works but trivial issues with lower level bitstreams, leave fix for later project if desired to automate full process (when loading one lower partial, the other shuts off but it can be loaded to turn back on - not sure why)
+
 - run main script up to synth only, not P&R
 
 cl;tclsh RUN_BUILD.tcl -name PRJ0 -clean -skipIMP
@@ -11,10 +13,6 @@ cl;tclsh RUN_BUILD.tcl -name PRJ0 -skipBD -clean -skipIMP -forceCleanImg
   - run these commands from the output_products/dcp directory
    (launch vivado -mode tcl)
 
-# test1
-## test2
-### test3
-#### test4
 
 
 
