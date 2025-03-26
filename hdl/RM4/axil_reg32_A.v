@@ -9,6 +9,8 @@
 	(
     input [63:0] git_hash,
     input [31:0] timestamp,
+    input [63:0] git_hash_led,
+    input [31:0] timestamp_led,
 		input         led,
 		input         led3,
     output [1:0]  led_sel,
@@ -605,13 +607,13 @@
 	begin
 	      // Address decoding for reading registers
 	      case ( axi_araddr[ADDR_LSB+OPT_MEM_ADDR_BITS:ADDR_LSB] )
-	        5'h00   : reg_data_out <= git_hash[31: 0];//slv_reg0;   0x0
-	        5'h01   : reg_data_out <= git_hash[63:32];//slv_reg1;   0x4
-	        5'h02   : reg_data_out <= timestamp;      //slv_reg2;   0x8
-	        5'h03   : reg_data_out <= 32'hbaaf_deec;  //slv_reg3;   0xC
-	        5'h04   : reg_data_out <= 32'hdead_0666;  // 0x10
-	        5'h05   : reg_data_out <= timestamp; // 0x14
-	        5'h06   : reg_data_out <= {30'h0,led,led3};//slv_reg6; // 0x18
+	        5'h00   : reg_data_out <= git_hash[31: 0];    //  0x0
+	        5'h01   : reg_data_out <= git_hash[63:32];    //  0x4
+	        5'h02   : reg_data_out <= timestamp;          //  0x8
+	        5'h03   : reg_data_out <= git_hash_led[31: 0];//  0xC
+	        5'h04   : reg_data_out <= git_hash_led[63:32];//  0x10
+	        5'h05   : reg_data_out <= timestamp_led;      //  0x14
+	        5'h06   : reg_data_out <= {30'h0,led,led3};   //  0x18
 	        5'h07   : reg_data_out <= slv_reg7; // 0x1C       
 	        5'h08   : reg_data_out <= slv_reg8; // 0x20    
 	        5'h09   : reg_data_out <= slv_reg9; // 0x24  

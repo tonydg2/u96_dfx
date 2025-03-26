@@ -23,9 +23,9 @@ logic         M00_AXIL_wready  ,s_axi_mgr_wready  ,m_axi_mgr_wready  ;
 logic [3:0]   M00_AXIL_wstrb   ,s_axi_mgr_wstrb   ,m_axi_mgr_wstrb   ;
 logic         M00_AXIL_wvalid  ,s_axi_mgr_wvalid  ,m_axi_mgr_wvalid  ;
 
-logic [63:0]  git_hash;
+logic [63:0]  git_hash,git_hash_led;
 logic [4:0]   led_div_i;
-logic [31:0]  timestamp;
+logic [31:0]  timestamp,timestamp_led;
 logic [1:0]   led_sel;
 logic [15:0]  probe0;
 
@@ -127,6 +127,8 @@ dfx_axi_mgr dfx_axi_mgr_inst (
   ) axil_reg32_2_inst	(
     .git_hash       (git_hash         ),
     .timestamp      (timestamp        ),
+    .git_hash_led   (git_hash_led     ),
+    .timestamp_led  (timestamp_led    ),
 		.led            (bd_led           ),
     .led3           (led3             ),
     .led_sel        (led_sel          ),
@@ -166,9 +168,11 @@ dfx_axi_mgr dfx_axi_mgr_inst (
   );
 
   led_cnt3_pr led_cnt3_pr_inst (
-    .rst    (~rstn        ),
-    .clk100 (clk100       ),
-    .led_o  (led3         )
+    .rst          (~rstn        ),
+    .clk100       (clk100       ),
+    .led_o        (led3         ),
+    .git_hash_o   (git_hash_led ),
+    .timestamp_o  (timestamp_led)
   );
 
   assign RADIO_LED[0] = (led_sel == 2'h0)? led3:
@@ -326,7 +330,9 @@ endmodule
 module led_cnt3_pr (
   input   rst,
   input   clk100,
-  output  led_o);
+  output  led_o,
+  output [63:0] git_hash_o,
+  output [31:0] timestamp_o);
 endmodule
 
 module axil_reg32_2 #
@@ -336,6 +342,8 @@ module axil_reg32_2 #
 	)(
   input [63:0] git_hash,
   input [31:0] timestamp,
+  input [63:0] git_hash_led,
+  input [31:0] timestamp_led,
 	input         led,
 	input         led3,
   output [1:0]  led_sel,
