@@ -46,7 +46,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# axil_reg32, led_cnt_wrapper, user_init_64b_wrapper_zynq
+# axil_reg32, led_cnt_wrapper, user_init_64b_wrapper_zynq, axil_passthru
 
 # Please add the sources of those modules before sourcing this Tcl script.
 
@@ -167,6 +167,7 @@ if { $bCheckModules == 1 } {
 axil_reg32\
 led_cnt_wrapper\
 user_init_64b_wrapper_zynq\
+axil_passthru\
 "
 
    set list_mods_missing ""
@@ -240,7 +241,6 @@ proc create_root_design { parentCell } {
   # Create ports
   set led_div_i [ create_bd_port -dir I -from 4 -to 0 led_div_i ]
   set led_o [ create_bd_port -dir O led_o ]
-  set led_wren_i [ create_bd_port -dir I led_wren_i ]
   set rstn [ create_bd_port -dir O -type rst rstn ]
   set clk100 [ create_bd_port -dir O -type clk clk100 ]
   set_property -dict [ list \
@@ -680,9 +680,21 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   ] $zynq_ultra_ps_e_0
 
 
+  # Create instance: reg32_2, and set properties
+  set block_name axil_passthru
+  set block_cell_name reg32_2
+  if { [catch {set reg32_2 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $reg32_2 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
   # Create interface connections
+  connect_bd_intf_net -intf_net axil_passthru_0_M_AXI [get_bd_intf_ports M00_AXIL] [get_bd_intf_pins reg32_2/M_AXI]
   connect_bd_intf_net -intf_net smartconnect_0_M00_AXI [get_bd_intf_pins axil_reg32_0/S_AXI] [get_bd_intf_pins smartconnect_0/M00_AXI]
-  connect_bd_intf_net -intf_net smartconnect_0_M01_AXI [get_bd_intf_ports M00_AXIL] [get_bd_intf_pins smartconnect_0/M01_AXI]
+  connect_bd_intf_net -intf_net smartconnect_0_M01_AXI [get_bd_intf_pins smartconnect_0/M01_AXI] [get_bd_intf_pins reg32_2/S_AXI]
   connect_bd_intf_net -intf_net zynq_ultra_ps_e_0_M_AXI_HPM0_FPD [get_bd_intf_pins zynq_ultra_ps_e_0/M_AXI_HPM0_FPD] [get_bd_intf_pins smartconnect_0/S00_AXI]
 
   # Create port connections
@@ -694,13 +706,15 @@ Port;FD4A0000;FD4AFFFF;1|FPD;DPDMA;FD4C0000;FD4CFFFF;1|FPD;DDR_XMPU5_CFG;FD05000
   connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins proc_sys_reset_0/peripheral_reset] [get_bd_pins led_cnt_wrapper_0/rst]
   connect_bd_net -net user_init_64b_wrappe_0_usr_access_data_o [get_bd_pins user_init_64b_wrappe_0/usr_access_data_o] [get_bd_ports timestamp] [get_bd_pins axil_reg32_0/timestamp]
   connect_bd_net -net user_init_64b_wrappe_0_value_o [get_bd_pins user_init_64b_wrappe_0/value_o] [get_bd_ports git_hash] [get_bd_pins axil_reg32_0/git_hash]
-  connect_bd_net -net wren_i_0_1 [get_bd_ports led_wren_i] [get_bd_pins led_cnt_wrapper_0/wren_i]
-  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins proc_sys_reset_0/slowest_sync_clk] [get_bd_pins smartconnect_0/aclk] [get_bd_ports clk100] [get_bd_pins led_cnt_wrapper_0/clk100] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins axil_reg32_0/S_AXI_ACLK]
+  connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins proc_sys_reset_0/slowest_sync_clk] [get_bd_pins smartconnect_0/aclk] [get_bd_ports clk100] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins axil_reg32_0/S_AXI_ACLK] [get_bd_pins led_cnt_wrapper_0/clk100]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_resetn0 [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0] [get_bd_pins proc_sys_reset_0/ext_reset_in] [get_bd_ports rstn]
 
   # Create address segments
-  assign_bd_address -offset 0xA0010000 -range 0x00000080 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs M00_AXIL/Reg] -force
   assign_bd_address -offset 0xA0000000 -range 0x00000080 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs axil_reg32_0/S_AXI/reg0] -force
+  assign_bd_address -offset 0xA0001000 -range 0x00000080 -target_address_space [get_bd_addr_spaces zynq_ultra_ps_e_0/Data] [get_bd_addr_segs reg32_2/S_AXI/reg0] -force
+
+  # Exclude Address Segments
+  exclude_bd_addr_seg -offset 0x00000000 -range 0x00000080 -target_address_space [get_bd_addr_spaces reg32_2/M_AXI] [get_bd_addr_segs M00_AXIL/Reg]
 
 
   # Restore current instance

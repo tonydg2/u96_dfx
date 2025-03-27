@@ -57,8 +57,7 @@ logic [15:0]  probe0;
     .clk100             (clk100           ),
     .rstn               (rstn             ),
     .led_div_i          ('0               ),
-    .led_o              (bd_led),//RADIO_LED[0]     ),//Yellow
-    .led_wren_i         ('0               )
+    .led_o              (bd_led)//RADIO_LED[0]     ),//Yellow
   );
 
 //  led_cnt led_cnt_inst (
